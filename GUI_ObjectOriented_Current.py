@@ -180,7 +180,22 @@ class SelectDatabase(tk.Frame, Pages):
                 self.newWindow.grab_release()
 
     def submit_collection(self):
-        pass
+        self.newWindow = Toplevel(self)
+        self.newWindow.title("Create New Collection")
+
+        self.newWindow.grab_set()
+
+        db_create_label = tk.Label(self.newWindow, text="Enter valid name \n to create new database")
+        db_create_label.grid(row=0, column=0, padx=10, pady=10)
+        self.db_entry = tk.Entry(self.newWindow, borderwidth=5)
+        self.db_entry.grid(row=0, column=1, padx=10, pady=10)
+        db_submit_button = tk.Button(self.newWindow, text="ADD DATABASE", command=self.submit_database)
+        db_submit_button.grid(row=1, column=2, padx=10, pady=10)
+
+        col_create_label = tk.Label(self.newWindow, text="Enter valid name\nto create new collection\nDatabases are not\ncreated without content")
+        col_create_label.grid(row=1, column=0, padx=10, pady=10)
+        self.col_entry = tk.Entry(self.newWindow, borderwidth=5)
+        self.col_entry.grid(row=1, column=1, padx=10, pady=10)
 
 class MainPage(tk.Frame, Pages):
     def __init__(self, parent, controller):

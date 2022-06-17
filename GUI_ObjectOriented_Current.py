@@ -185,7 +185,7 @@ class SelectDatabase(tk.Frame, Pages):
 
         self.newWindow.grab_set()
 
-        db_create_label = tk.Label(self.newWindow, text="Enter valid name \n to create new database")
+        db_create_label = tk.Label(self.newWindow, text="Enter valid name \n to create new collection")
         db_create_label.grid(row=0, column=0, padx=10, pady=10)
         self.db_entry = tk.Entry(self.newWindow, borderwidth=5)
         self.db_entry.grid(row=0, column=1, padx=10, pady=10)

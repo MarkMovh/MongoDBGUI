@@ -127,6 +127,10 @@ class SelectDatabase(tk.Frame, Pages):
                rowcount += 1
                count = 0
 
+        create_col_button=tk.Button(self, text="+")
+        create_col_button.grid(row=rowcount + 1, column=1, pady=25)
+        create_col_button.bind("<Button>", lambda e: self.create_collection_window())
+
     def set_collection(self, collection, db):
         Pages.coldatabase = db[collection]
         Pages.collection = collection
@@ -179,7 +183,7 @@ class SelectDatabase(tk.Frame, Pages):
 
                 self.newWindow.grab_release()
 
-    def submit_collection(self):
+    def create_collection_window(self):
         self.newWindow = Toplevel(self)
         self.newWindow.title("Create New Collection")
 

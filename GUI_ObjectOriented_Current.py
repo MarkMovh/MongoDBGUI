@@ -100,8 +100,8 @@ class SelectDatabase(tk.Frame, Pages):
         self.get_activedb()
 
     def get_activedb(self):
-        self.runningdb = self.database_connect.get_current_database()
-        self.create_collection_list(self.runningdb)
+        runningdb = self.database_connect.get_current_database()
+        self.create_collection_list(runningdb)
 
     def create_collection_list(self, chosendb):
         collection = chosendb.list_collection_names()
@@ -109,6 +109,8 @@ class SelectDatabase(tk.Frame, Pages):
         if len(self.buttons_list) != 0:
             for buttons in self.buttons_list:
                 buttons.grid_forget()
+
+            self.create_col_button.grid_forget()
 
         self.buttons_list.clear()
 
@@ -127,9 +129,9 @@ class SelectDatabase(tk.Frame, Pages):
                rowcount += 1
                count = 0
 
-        create_col_button=tk.Button(self, text="+")
-        create_col_button.grid(row=rowcount + 1, column=1, pady=25)
-        create_col_button.bind("<Button>", lambda e: self.create_collection_window())
+        self.create_col_button=tk.Button(self, text="+")
+        self.create_col_button.grid(row=rowcount + 1, column=1, pady=25)
+        self.create_col_button.bind("<Button>", lambda e: self.create_collection_window())
 
     def set_collection(self, collection, db):
         Pages.coldatabase = db[collection]
@@ -138,21 +140,22 @@ class SelectDatabase(tk.Frame, Pages):
         self.controller.reload_frame(MainPage)
 
     def create_database_window(self):
-        self.newWindow = Toplevel(self)
-        self.newWindow.title("Create New Database")
+        self.dbWindow = Toplevel(self)
+        self.dbWindow.title("Create New Database")
 
-        self.newWindow.grab_set()
+        self.dbWindow.wait_visibility()
+        self.dbWindow.grab_set()
 
-        db_create_label = tk.Label(self.newWindow, text="Enter valid name \n to create new database")
+        db_create_label = tk.Label(self.dbWindow, text="Enter valid name \n to create new database")
         db_create_label.grid(row=0, column=0, padx=10, pady=10)
-        self.db_entry = tk.Entry(self.newWindow, borderwidth=5)
+        self.db_entry = tk.Entry(self.dbWindow, borderwidth=5)
         self.db_entry.grid(row=0, column=1, padx=10, pady=10)
-        db_submit_button = tk.Button(self.newWindow, text="ADD DATABASE", command=self.submit_database)
+        db_submit_button = tk.Button(self.dbWindow, text="ADD DATABASE", command=self.submit_database)
         db_submit_button.grid(row=1, column=2, padx=10, pady=10)
 
-        col_create_label = tk.Label(self.newWindow, text="Enter valid name\nto create new collection\nDatabases are not\ncreated without content")
+        col_create_label = tk.Label(self.dbWindow, text="Enter valid name\nto create new collection\nDatabases are not\ncreated without content")
         col_create_label.grid(row=1, column=0, padx=10, pady=10)
-        self.col_entry = tk.Entry(self.newWindow, borderwidth=5)
+        self.col_entry = tk.Entry(self.dbWindow, borderwidth=5)
         self.col_entry.grid(row=1, column=1, padx=10, pady=10)
 
     def submit_database(self):
@@ -173,33 +176,49 @@ class SelectDatabase(tk.Frame, Pages):
         if valid_status:
             self.database_connect.set_current_database(str(newdb_name))
 
-            if "system." in newcol_name or newcol_name.isspace() or "$" in newcol_name:
+            if "system." in newcol_name or newcol_name.isspace() or "$" in newcol_name or len(newcol_name) == 0:
                 messagebox.showerror("Error", "Collection contains invalid characters.")
                 valid_status = False 
 
             else:
-                running_db = self.database_connect.get_current_database()
-                self.set_collection(newcol_name, running_db)
-
-                self.newWindow.grab_release()
-
+                runningdb = self.database_connect.get_current_database()
+                self.dbWindow.grab_release()
+                self.set_collection(newcol_name, runningdb)
+                
     def create_collection_window(self):
-        self.newWindow = Toplevel(self)
-        self.newWindow.title("Create New Collection")
+        self.colWindow = Toplevel(self)
+        self.colWindow.title("Create New Collection")
 
-        self.newWindow.grab_set()
+        self.colWindow.wait_visibility()
+        self.colWindow.grab_set()
 
-        db_create_label = tk.Label(self.newWindow, text="Enter valid name \n to create new collection")
-        db_create_label.grid(row=0, column=0, padx=10, pady=10)
-        self.db_entry = tk.Entry(self.newWindow, borderwidth=5)
-        self.db_entry.grid(row=0, column=1, padx=10, pady=10)
-        db_submit_button = tk.Button(self.newWindow, text="ADD DATABASE", command=self.submit_database)
-        db_submit_button.grid(row=1, column=2, padx=10, pady=10)
+        top_frame = tk.Frame(self.colWindow)
+        top_frame.grid(row=0)
+        bottom_frame = tk.Frame(self.colWindow)
+        bottom_frame.grid(row=1)
 
-        col_create_label = tk.Label(self.newWindow, text="Enter valid name\nto create new collection\nDatabases are not\ncreated without content")
-        col_create_label.grid(row=1, column=0, padx=10, pady=10)
-        self.col_entry = tk.Entry(self.newWindow, borderwidth=5)
-        self.col_entry.grid(row=1, column=1, padx=10, pady=10)
+        col_create_label = tk.Label(top_frame, text="Enter valid name \n to create new collection")
+        col_create_label.grid(row=0, column=0, padx=10, pady=10)
+
+        self.col_entry = tk.Entry(top_frame, borderwidth=5)
+        self.col_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        col_submit_button = tk.Button(top_frame, text="ADD COLLECTION", command=self.submit_collection)
+        col_submit_button.grid(row=0, column=2, padx=10, pady=10)
+
+        info_label = tk.Label(bottom_frame, text="REMINDER: Databases and collections need to\nbe filled with content to be made permanent.")
+        info_label.grid(row=1, column=1)
+
+    def submit_collection(self):
+        newcol_name = self.col_entry.get()
+
+        if "system." in newcol_name or newcol_name.isspace() or "$" in newcol_name or len(newcol_name) == 0:
+                messagebox.showerror("Error", "Collection contains invalid characters.")
+
+        else:
+            runningdb = self.database_connect.get_current_database()
+            self.colWindow.grab_release()
+            self.set_collection(newcol_name, runningdb)
 
 class MainPage(tk.Frame, Pages):
     def __init__(self, parent, controller):
@@ -209,7 +228,7 @@ class MainPage(tk.Frame, Pages):
 
         label_collection = tk.Label(self, text="Selected Collection: " + Pages.collection).grid(row=1, column=0, padx=(25,0))
 
-        button3 = tk.Button(self, text="CHANGE DATABASE", command=lambda: controller.current_frame("SelectDatabase")).grid(row=1, column=2, padx=25, pady=(0,0))
+        button3 = tk.Button(self, text="CHANGE DATABASE", command=lambda: controller.reload_frame(SelectDatabase)).grid(row=1, column=2, padx=25, pady=(0,0))
 
         label_create = tk.Label(self, text="Create and insert data").grid(row=1, column=0, padx=25, pady=(50,0))
         create_button = tk.Button(self, text="CREATE", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=2, column=0)

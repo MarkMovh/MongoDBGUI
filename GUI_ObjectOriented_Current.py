@@ -68,21 +68,28 @@ class SelectDatabase(tk.Frame, Pages):
 
         database_dict = {}
         self.buttons_list = []
-        self.rowcount= 1
-        self.count= 0
+        
 
         self.database_connect = Connect_MongoDB()
         databases = self.database_connect.get_database_list()
 
-        label_top = tk.Label(self, text="Choose existing database").grid(row=0, column=1, pady=25)
-        self.runningdb_label = tk.Label(self, text="No active database") 
+        database_list_frame = tk.Frame(self)
+        database_list_frame.grid(row=0)
+
+        self.collection_list_frame = tk.Frame(self)
+        self.collection_list_frame.grid(row=1)
+
+        label_top = tk.Label(database_list_frame, text="Choose existing database").grid(row=0, column=1, pady=25)
+        self.runningdb_label = tk.Label(database_list_frame, text="No active database") 
 
         for index, db in enumerate(databases):
             database_dict[index] = db
 
+        self.rowcount= 1
+        self.count= 0
         for key, value in database_dict.items():   
             namedb = value['name']
-            tk.Button(self, text=str(value['name']), command=lambda namedb=namedb: self.set_activedb(namedb)).grid(row=self.rowcount, column=(self.count), padx=50, pady=15)
+            tk.Button(database_list_frame, text=str(value['name']), command=lambda namedb=namedb: self.set_activedb(namedb)).grid(row=self.rowcount, column=(self.count), padx=50, pady=15)
             self.count += 1
 
             if self.count % 3 == 0:
@@ -90,7 +97,7 @@ class SelectDatabase(tk.Frame, Pages):
                 self.count = 0
 
         self.runningdb_label.grid(row=self.rowcount + 1, column=0, pady=25)
-        create_db_button=tk.Button(self, text="+")
+        create_db_button=tk.Button(database_list_frame, text="+")
         create_db_button.grid(row=self.rowcount + 1, column=2, pady=25)
         create_db_button.bind("<Button>", lambda e: self.create_database_window())
 
@@ -114,12 +121,12 @@ class SelectDatabase(tk.Frame, Pages):
 
         self.buttons_list.clear()
 
-        rowcount = self.rowcount + 2
+        rowcount = 0
         count = 0
 
         for collect in collection:
             col = collect
-            self.buttons_list.append(tk.Button(self, text=str(col), command=lambda col=col: self.set_collection(col, chosendb)))
+            self.buttons_list.append(tk.Button(self.collection_list_frame, text=str(col), command=lambda col=col: self.set_collection(col, chosendb)))
 
         for collect in range(len(self.buttons_list)):
             self.buttons_list[collect].grid(row=rowcount, column=count, padx=50, pady=15)
@@ -129,7 +136,7 @@ class SelectDatabase(tk.Frame, Pages):
                rowcount += 1
                count = 0
 
-        self.create_col_button=tk.Button(self, text="+")
+        self.create_col_button=tk.Button(self.collection_list_frame, text="+")
         self.create_col_button.grid(row=rowcount + 1, column=1, pady=25)
         self.create_col_button.bind("<Button>", lambda e: self.create_collection_window())
 

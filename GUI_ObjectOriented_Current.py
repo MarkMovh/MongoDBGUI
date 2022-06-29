@@ -270,20 +270,20 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         self.inputlist = []
         self.newinputlist = []
 
-        frame_one = Frame(self)
-        frame_one.pack(fill=BOTH, expand=1)
+        frame_self = Frame(self)
+        frame_self .pack(fill=BOTH, expand=1)
 
-        self.canvas_frame = Canvas(frame_one)
-        self.canvas_frame.pack(side=LEFT, fill=BOTH, expand=1)
+        self.canvas_insertone = Canvas(frame_self )
+        self.canvas_insertone.pack(side=LEFT, fill=BOTH, expand=1)
 
-        scrollbar= tk.Scrollbar(frame_one, orient=VERTICAL, command=self.canvas_frame.yview)
+        scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertone.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
 
-        self.canvas_frame.configure(yscrollcommand=scrollbar.set)
-        self.canvas_frame.bind('<Configure>', lambda e: self.canvas_frame.configure(scrollregion = self.canvas_frame.bbox("all")))
+        self.canvas_insertone.configure(yscrollcommand=scrollbar.set)
+        self.canvas_insertone.bind('<Configure>', lambda e: self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox("all")))
 
-        self.frame_two = Frame(self.canvas_frame)
-        self.canvas_frame.create_window((0,0), window=self.frame_two , anchor="nw")
+        self.frame_two = Frame(self.canvas_insertone)
+        self.canvas_insertone.create_window((0,0), window=self.frame_two , anchor="nw")
 
         labels = [tk.Label(self.frame_two , text="Enter unique field"), tk.Label(self.frame_two , text="Enter corresponding the value/s")]
         self.inputlist.append(labels[:])
@@ -324,7 +324,7 @@ class CreatePage_InsertOne(tk.Frame, Pages):
             widget_two.grid(row=index, column=1, padx=10)
         
         self.update_idletasks()
-        self.canvas_frame.configure(scrollregion = self.canvas_frame.bbox('all'))
+        self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox('all'))
     
     def submit_data(self):
         for index, entries in enumerate(self.newinputlist):
@@ -332,7 +332,7 @@ class CreatePage_InsertOne(tk.Frame, Pages):
             my_label.grid(row=len(self.inputlist) + index, column=0) 
 
         self.update_idletasks()
-        self.canvas_frame.configure(scrollregion = self.canvas_frame.bbox('all'))
+        self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox('all'))
 
 class CreatePage_InsertMany(tk.Frame, Pages):
     def __init__(self, parent, controller):
@@ -341,8 +341,23 @@ class CreatePage_InsertMany(tk.Frame, Pages):
 
         self.inputlist = []
 
-        label = tk.Label(self, text="Insert valid JSON document")
-        first_entry = tk.Text(self, borderwidth=5, height= 10, width=20)
+        frame_self = Frame(self)
+        frame_self.pack(fill=BOTH, expand=1)
+
+        self.canvas_insertmany = Canvas(frame_self )
+        self.canvas_insertmany.pack(side=LEFT, fill=BOTH, expand=1)
+
+        scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertmany.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.canvas_insertmany.configure(yscrollcommand=scrollbar.set)
+        self.canvas_insertmany.bind('<Configure>', lambda e: self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox("all")))
+
+        self.frame_two = Frame(self.canvas_insertmany)
+        self.canvas_insertmany.create_window((0,0), window=self.frame_two , anchor="nw")
+
+        label = tk.Label(self.frame_two, text="Insert valid JSON document")
+        first_entry = tk.Text(self.frame_two, borderwidth=5, height= 10, width=20)
         
         self.inputlist.append(label)
         self.inputlist.append(first_entry)
@@ -350,23 +365,29 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         for widgets in range(len(self.inputlist)):
             self.inputlist[widgets].grid(row=widgets, column=0, padx=50, pady=10)
 
-        add_button = tk.Button(self, text="ADD INSERT", command=self.add_insert).grid(row=1, column=2, pady=(0,100))
-        submit_button = tk.Button(self, text="SUBMIT",command=self.submit_data)
+        add_button = tk.Button(self.frame_two, text="ADD INSERT", command=self.add_insert).grid(row=1, column=2, pady=(0,100))
+        submit_button = tk.Button(self.frame_two, text="SUBMIT",command=self.submit_data)
         submit_button.grid(row=1, column=2, pady=(0,25))
-        insertmany_button = tk.Button(self, text="INSERT ONE", command=lambda: controller.current_frame("CreatePage_InsertOne")).grid(row=1, column=2, pady=(50,0))
-        back_button = tk.Button(self, text="BACK", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=1, column=2, pady=(125,0))
+        insertmany_button = tk.Button(self.frame_two, text="INSERT ONE", command=lambda: controller.current_frame("CreatePage_InsertOne")).grid(row=1, column=2, pady=(50,0))
+        back_button = tk.Button(self.frame_two, text="BACK", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=1, column=2, pady=(125,0))
 
     def add_insert(self):
-        self.inputlist.append(tk.Text(self, borderwidth=5, height= 10, width=20))
+        self.inputlist.append(tk.Text(self.frame_two, borderwidth=5, height= 10, width=20))
 
         for ndex, widget in enumerate(self.inputlist):
             widget.grid(row=ndex, column=0)
 
+        self.update_idletasks()
+        self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
+
     def submit_data(self):
         for ndex, text in enumerate(self.inputlist):
             if ndex != 0:
-                data_label = Label(self, text=str(text.get("1.0", END)))
+                data_label = Label(self.frame_two, text=str(text.get("1.0", END)))
                 data_label.grid(row=len(self.inputlist) + ndex, column=0)
+
+        self.update_idletasks()
+        self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

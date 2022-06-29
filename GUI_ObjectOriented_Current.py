@@ -270,23 +270,38 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         self.inputlist = []
         self.newinputlist = []
 
-        labels = [tk.Label(self, text="Enter unique field"), tk.Label(self, text="Enter corresponding the value/s")]
+        frame_one = Frame(self)
+        frame_one.pack(fill=BOTH, expand=1)
+
+        self.canvas_frame = Canvas(frame_one)
+        self.canvas_frame.pack(side=LEFT, fill=BOTH, expand=1)
+
+        scrollbar= tk.Scrollbar(frame_one, orient=VERTICAL, command=self.canvas_frame.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.canvas_frame.configure(yscrollcommand=scrollbar.set)
+        self.canvas_frame.bind('<Configure>', lambda e: self.canvas_frame.configure(scrollregion = self.canvas_frame.bbox("all")))
+
+        self.frame_two = Frame(self.canvas_frame)
+        self.canvas_frame.create_window((0,0), window=self.frame_two , anchor="nw")
+
+        labels = [tk.Label(self.frame_two , text="Enter unique field"), tk.Label(self.frame_two , text="Enter corresponding the value/s")]
         self.inputlist.append(labels[:])
 
         for toplabels in range(1):
             self.inputlist[toplabels][0].grid(row=toplabels, column=0, padx=10, pady=5)
             self.inputlist[toplabels][1].grid(row=toplabels, column=1, padx=10, pady=5)
 
-        first_entries = [tk.Entry(self, borderwidth=5), tk.Text(self, borderwidth=5, height= 5, width=20)]
+        first_entries = [tk.Entry(self.frame_two , borderwidth=5), tk.Text(self.frame_two, borderwidth=5, height= 5, width=20)]
         self.newinputlist.append(first_entries[:])
         self.inputlist.append(first_entries[:])
 
         for x in range(0, len(self.newinputlist) + 1):
             self.newinputlist[0][x].grid(row=1, column=x, padx=10, pady=5)
 
-        button_input_1 = [tk.Button(self, text="ADD FIELD/VALUE", command=self.add_insert), tk.Button(self, text="BACK", command=lambda: controller.current_frame("CreatePage_Main"))]
+        button_input_1 = [tk.Button(self.frame_two , text="ADD FIELD/VALUE", command=self.add_insert), tk.Button(self.frame_two, text="BACK", command=lambda: controller.current_frame("CreatePage_Main"))]
         self.inputlist.append(button_input_1[:])
-        button_input_2 = [tk.Button(self, text="INSERT MANY", command=lambda: controller.current_frame("CreatePage_InsertMany")), tk.Button(self, text="SUBMIT DATA", command=self.submit_data)]
+        button_input_2 = [tk.Button(self.frame_two, text="INSERT MANY", command=lambda: controller.current_frame("CreatePage_InsertMany")), tk.Button(self.frame_two, text="SUBMIT DATA", command= self.submit_data)]
         self.inputlist.append(button_input_2[:])
         
         for button in range(len(self.inputlist) - 2, len(self.inputlist)):
@@ -294,7 +309,7 @@ class CreatePage_InsertOne(tk.Frame, Pages):
             self.inputlist[button][1].grid(row=button, column=1, padx=10, pady=5)
 
     def add_insert(self):
-        add_input = [tk.Entry(self, borderwidth=5), tk.Text(self, borderwidth=5, height= 5, width=20)]
+        add_input = [tk.Entry(self.frame_two, borderwidth=5), tk.Text(self.frame_two, borderwidth=5, height= 5, width=20)]
         self.inputlist.insert(-2, add_input)
         self.newinputlist.append(add_input)
         
@@ -307,11 +322,17 @@ class CreatePage_InsertOne(tk.Frame, Pages):
 
             widget_one.grid(row=index, column=0, padx=10, pady=5)
             widget_two.grid(row=index, column=1, padx=10)
-
+        
+        self.update_idletasks()
+        self.canvas_frame.configure(scrollregion = self.canvas_frame.bbox('all'))
+    
     def submit_data(self):
         for index, entries in enumerate(self.newinputlist):
-            my_label = Label(self, text=str(entries[0].get()) + str(entries[1].get("1.0", END)))
+            my_label = Label(self.frame_two, text=str(entries[0].get()) + str(entries[1].get("1.0", END)))
             my_label.grid(row=len(self.inputlist) + index, column=0) 
+
+        self.update_idletasks()
+        self.canvas_frame.configure(scrollregion = self.canvas_frame.bbox('all'))
 
 class CreatePage_InsertMany(tk.Frame, Pages):
     def __init__(self, parent, controller):

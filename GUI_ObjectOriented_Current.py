@@ -347,6 +347,7 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         self.controller = controller
 
         self.inputlist = []
+        self.newinputlist = []
 
         frame_self = Frame(self)
         frame_self.pack(fill=BOTH, expand=1)
@@ -368,6 +369,7 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         
         self.inputlist.append(label)
         self.inputlist.append(first_entry)
+        self.newinputlist.append(first_entry)
 
         for widgets in range(len(self.inputlist)):
             self.inputlist[widgets].grid(row=widgets, column=0, padx=50, pady=10)
@@ -379,7 +381,9 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         back_button = tk.Button(self.frame_two, text="BACK", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=1, column=2, pady=(125,0))
 
     def add_insert(self):
-        self.inputlist.append(tk.Text(self.frame_two, borderwidth=5, height= 10, width=20))
+        newtextbox = tk.Text(self.frame_two, borderwidth=5, height= 10, width=20)
+        self.inputlist.append(newtextbox)
+        self.newinputlist.append(newtextbox)
 
         for ndex, widget in enumerate(self.inputlist):
             widget.grid(row=ndex, column=0)
@@ -388,13 +392,16 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
 
     def submit_data(self):
-        for ndex, text in enumerate(self.inputlist):
-            if ndex != 0:
-                data_label = Label(self.frame_two, text=str(text.get("1.0", END)))
-                data_label.grid(row=len(self.inputlist) + ndex, column=0)
+        for textbox in self.newinputlist:
+            print(textbox)
+            #submit_product = Pages.coldatabase.insert_one( str(textbox.get("1.0", END) ) )
+
+        messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
 
         self.update_idletasks()
         self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
+
+        self.controller.reload_frame(CreatePage_InsertMany) 
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

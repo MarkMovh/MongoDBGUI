@@ -327,12 +327,19 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox('all'))
     
     def submit_data(self):
-        for index, entries in enumerate(self.newinputlist):
-            my_label = Label(self.frame_two, text=str(entries[0].get()) + str(entries[1].get("1.0", END)))
-            my_label.grid(row=len(self.inputlist) + index, column=0) 
+        current_dict = {}
 
+        for entries in self.newinputlist:
+            current_dict[str(entries[0].get())] = str(entries[1].get("1.0", END))[:-1]
+
+        submit_product = Pages.coldatabase.insert_one( current_dict )
+
+        messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
+        
         self.update_idletasks()
         self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox('all'))
+
+        self.controller.reload_frame(CreatePage_InsertOne) 
 
 class CreatePage_InsertMany(tk.Frame, Pages):
     def __init__(self, parent, controller):
@@ -421,7 +428,7 @@ class DeletePage(tk.Frame, Pages):
     def delete_collection(self):
         mycol = Pages.coldatabase
         print(mycol)
-        self.controller.current_frame("SelectDatabase")
+        self.controller.reload_frame(SelectDatabase)
 
 if __name__ == "__main__":
     NoSQL_Project = Database_Project()

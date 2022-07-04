@@ -257,7 +257,7 @@ class CreatePage_Main(tk.Frame, Pages):
         insert_button = tk.Button(self, text="INSERT ONE", command=lambda: controller.current_frame("CreatePage_InsertOne")).grid(row=0, column=0, padx=(50, 0), pady=(75, 25))
         insertMany_button = tk.Button(self, text="INSERT MANY", command=lambda: controller.current_frame("CreatePage_InsertMany")).grid(row=0, column=1, padx=50, pady=(75, 25))
         import_button = tk.Button(self, text="IMPORT FILE", command=self.import_file).grid(row=0, column=2, padx=(0, 50), pady=(75, 25))
-        back_button = tk.Button(self, text="BACK", command=lambda: controller.current_frame("MainPage")).grid(row=1, column=1, pady=25)
+        back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage)).grid(row=1, column=1, pady=25)
 
     def import_file(self):
         pass

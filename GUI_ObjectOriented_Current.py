@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
 from pymongo import MongoClient
+import json
 
 class Connect_MongoDB:
     def __init__(self):
@@ -393,8 +394,7 @@ class CreatePage_InsertMany(tk.Frame, Pages):
 
     def submit_data(self):
         for textbox in self.newinputlist:
-            print(textbox)
-            #submit_product = Pages.coldatabase.insert_one( str(textbox.get("1.0", END) ) )
+            submit_product = Pages.coldatabase.insert_one( json.loads(str(textbox.get("1.0", END) ) ) )
 
         messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
 

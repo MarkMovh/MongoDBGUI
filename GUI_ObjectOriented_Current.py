@@ -137,7 +137,7 @@ class SelectDatabase(tk.Frame, Pages):
                count = 0
 
         self.create_col_button=tk.Button(self.collection_list_frame, text="+")
-        self.create_col_button.grid(row=rowcount + 1, column=1, pady=25)
+        self.create_col_button.grid(row=rowcount , column=count, pady=25)
         self.create_col_button.bind("<Button>", lambda e: self.create_collection_window())
 
     def set_collection(self, collection, db):

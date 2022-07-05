@@ -333,14 +333,17 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         for entries in self.newinputlist:
             current_dict[str(entries[0].get())] = str(entries[1].get("1.0", END))[:-1]
 
-        submit_product = Pages.coldatabase.insert_one( current_dict )
+        try:
+            submit_product = Pages.coldatabase.insert_one( current_dict )
 
-        messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
-        
-        self.update_idletasks()
-        self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox('all'))
+            messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
+            
+            self.update_idletasks()
+            self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox('all'))
 
-        self.controller.reload_frame(CreatePage_InsertOne) 
+            self.controller.reload_frame(CreatePage_InsertOne) 
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
 class CreatePage_InsertMany(tk.Frame, Pages):
     def __init__(self, parent, controller):
@@ -393,15 +396,19 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
 
     def submit_data(self):
-        for textbox in self.newinputlist:
-            submit_product = Pages.coldatabase.insert_one( json.loads(str(textbox.get("1.0", END) ) ) )
+        try:
+            for textbox in self.newinputlist:
+                submit_product = Pages.coldatabase.insert_one( json.loads(str(textbox.get("1.0", END) ) ) )
 
-        messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
+            messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")
 
-        self.update_idletasks()
-        self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
+            self.update_idletasks()
+            self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
 
-        self.controller.reload_frame(CreatePage_InsertMany) 
+            self.controller.reload_frame(CreatePage_InsertMany) 
+            
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

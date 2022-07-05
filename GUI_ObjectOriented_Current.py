@@ -241,7 +241,7 @@ class MainPage(tk.Frame, Pages):
         create_button = tk.Button(self, text="CREATE", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=2, column=0)
 
         label_read = tk.Label(self, text="Query over data").grid(row=1, column=1, padx=25, pady=(50,0))
-        read_button = tk.Button(self, text="READ").grid(row=2, column=1)
+        read_button = tk.Button(self, text="READ", command=lambda: controller.reload_frame(ReadPage)).grid(row=2, column=1)
 
         label_update = tk.Label(self, text="Modify existing data").grid(row=3, column=0, padx=25, pady=(50,0))
         update_button = tk.Button(self, text="UPDATE").grid(row=4, column=0, pady=(0,50))
@@ -406,9 +406,36 @@ class CreatePage_InsertMany(tk.Frame, Pages):
             self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox('all'))
 
             self.controller.reload_frame(CreatePage_InsertMany) 
-            
+
         except:
             messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
+
+
+class ReadPage(tk.Frame, Pages):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        itemlist = tk.Listbox(self, width=75, height=25)
+        itemlist.grid(row=0, column=0, padx=(10,0), pady=10)
+
+        searchbox = tk.Entry(self, borderwidth=5, width=25)
+        searchbox.grid(row=0, column=1,padx=25, pady=(0, 325))
+
+        searchbutton = tk.Button(self, text="SEARCH", command=self.query)
+        searchbutton.grid(row=0, column=1, padx=25, pady=(0, 265))
+
+        advsearchbutton = tk.Button(self, text="ADVANCED\nSEARCH", command=self.advanced_search)
+        advsearchbutton.grid(row=0, column=1, padx=25, pady=(0, 185))
+
+        back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage))
+        back_button.grid(row=0, column=1, padx=25, pady=(0, 105))
+
+    def query(self):
+        pass
+
+    def advanced_search(self):
+        pass
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):
@@ -427,7 +454,7 @@ class DeletePage(tk.Frame, Pages):
         button_delete_one = tk.Button(self, text="DELETE ONE", command=self.delete_one).grid(row=3, column=0, padx=25, pady=5)
         button_delete_two = tk.Button(self, text="DELETE MANY", command=self.delete_many).grid(row=3, column=1, padx=25, pady=5)
         button_delete_collection = tk.Button(self, text="DELETE COLLECTION", command=self.delete_collection).grid(row=4, column=0, padx=25, pady=5)
-        back_button = tk.Button(self, text="BACK", command=lambda: controller.current_frame("MainPage")).grid(row=4, column=1, padx=25, pady=5)
+        back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage)).grid(row=4, column=1, padx=25, pady=5)
 
         label_delete_collection = tk.Label(self, text="Note! Pressing this button \n will delete current collection").grid(row=5, column=0, padx=25, pady=(0,25))
 
@@ -443,6 +470,8 @@ class DeletePage(tk.Frame, Pages):
         mycol = Pages.coldatabase
         print(mycol)
         self.controller.reload_frame(SelectDatabase)
+
+
 
 if __name__ == "__main__":
     NoSQL_Project = Database_Project()

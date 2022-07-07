@@ -274,7 +274,7 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         frame_self = Frame(self)
         frame_self .pack(fill=BOTH, expand=1)
 
-        self.canvas_insertone = Canvas(frame_self )
+        self.canvas_insertone = Canvas(frame_self)
         self.canvas_insertone.pack(side=LEFT, fill=BOTH, expand=1)
 
         scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertone.yview)
@@ -356,7 +356,7 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         frame_self = Frame(self)
         frame_self.pack(fill=BOTH, expand=1)
 
-        self.canvas_insertmany = Canvas(frame_self )
+        self.canvas_insertmany = Canvas(frame_self)
         self.canvas_insertmany.pack(side=LEFT, fill=BOTH, expand=1)
 
         scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertmany.yview)
@@ -416,26 +416,54 @@ class ReadPage(tk.Frame, Pages):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        itemlist = tk.Listbox(self, width=75, height=25)
-        itemlist.grid(row=0, column=0, padx=(10,0), pady=10)
+        self.searchbox_field = tk.Entry(self, borderwidth=5, width=25)
+        self.searchbox_field.insert(0, "<Enter a field>")
+        self.searchbox_field.grid(row=0, column=1, padx=(25), pady=(0, 325))
 
-        searchbox = tk.Entry(self, borderwidth=5, width=25)
-        searchbox.grid(row=0, column=1,padx=25, pady=(0, 325))
+        self.searchbox_query = tk.Entry(self, borderwidth=5, width=25)
+        self.searchbox_query.insert(0, "<Enter a query>")
+        self.searchbox_query.grid(row=0, column=1, padx=(25), pady=(0, 265))
 
         searchbutton = tk.Button(self, text="SEARCH", command=self.query)
-        searchbutton.grid(row=0, column=1, padx=25, pady=(0, 265))
+        searchbutton.grid(row=0, column=1, padx=25, pady=(0, 205))
 
         advsearchbutton = tk.Button(self, text="ADVANCED\nSEARCH", command=self.advanced_search)
-        advsearchbutton.grid(row=0, column=1, padx=25, pady=(0, 185))
+        advsearchbutton.grid(row=0, column=1, padx=25, pady=(0, 105))
 
         back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage))
-        back_button.grid(row=0, column=1, padx=25, pady=(0, 105))
+        back_button.grid(row=0, column=1, padx=25, pady=(0, 25))
+
+
 
     def query(self):
-        pass
+        field_input = self.searchbox_field.get()
+        query_input = self.searchbox_query.get()
+
+        if query_input == "<Enter a query>":
+            query_input = ""
+
+        if field_input == "<Enter a field>":
+            messagebox.showerror("Error", "Select a valid field")
+
+        try:
+            query_return = Pages.coldatabase.find( { field_input: { "$regex": '.*' + query_input + '.*'} } )
+
+            for document in query_return:
+                self.itemlist.insert(END, document)
+
+
+
+        except:
+            messagebox.showerror("Error", "An error has occurred with the query. Review your input.")
 
     def advanced_search(self):
         pass
+
+    def resetlistbox(self):
+        for item in self.itemlist.curselection():
+            self.itemlist.delete(item)
+
+    #def generate_sb(self):
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

@@ -433,7 +433,23 @@ class ReadPage(tk.Frame, Pages):
         back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage))
         back_button.grid(row=0, column=1, padx=25, pady=(0, 25))
 
+        self.generate_sb()
 
+        frame_canvas = tk.Frame(self)
+        frame_canvas.grid(row=0, column=0, padx=(10,0), pady=10)
+
+        self.canvas = tk.Canvas(frame_canvas)
+        self.canvas.grid(row=0, column=0, sticky="news")
+
+        vertical_sb = tk.Scrollbar(frame_canvas, orient="vertical", command=self.canvas.yview)
+        vertical_sb.grid(row=0, column=1, sticky="ns")
+        self.canvas.configure(yscrollcommand=vertical_sb.set)
+
+        self.frame_listbox = tk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
+        
+        self.itemlist = tk.Listbox(self.frame_listbox, width=63)
+        self.itemlist.grid(row=0, column=0)
 
     def query(self):
         field_input = self.searchbox_field.get()
@@ -451,7 +467,8 @@ class ReadPage(tk.Frame, Pages):
             for document in query_return:
                 self.itemlist.insert(END, document)
 
-
+            self.frame_listbox.update_idletasks()
+            self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
         except:
             messagebox.showerror("Error", "An error has occurred with the query. Review your input.")

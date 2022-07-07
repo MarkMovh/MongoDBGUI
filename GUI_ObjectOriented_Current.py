@@ -435,6 +435,27 @@ class ReadPage(tk.Frame, Pages):
 
         self.generate_sb()
 
+    def generate_sb(self):
+        frame_canvas = tk.Frame(self)
+        frame_canvas.grid(row=0, column=0, padx=(10,0), pady=10)
+
+        self.canvas = tk.Canvas(frame_canvas)
+        self.canvas.grid(row=0, column=0, sticky="news")
+
+        vertical_sb = tk.Scrollbar(frame_canvas, orient="vertical", command=self.canvas.yview)
+        vertical_sb.grid(row=0, column=1, sticky="ns")
+        self.canvas.configure(yscrollcommand=vertical_sb.set)
+
+        horizontal_sb = tk.Scrollbar(frame_canvas, orient="horizontal", command=self.canvas.xview)
+        horizontal_sb.grid(row=1, column=0, sticky="we")
+        self.canvas.configure(xscrollcommand=horizontal_sb.set)
+
+        self.frame_listbox = tk.Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
+        
+        self.itemlist = tk.Listbox(self.frame_listbox, width=63)
+        self.itemlist.grid(row=0, column=0)
+
     def query(self):
         field_input = self.searchbox_field.get()
         query_input = self.searchbox_query.get()
@@ -463,23 +484,6 @@ class ReadPage(tk.Frame, Pages):
     def resetlistbox(self):
         for item in self.itemlist.curselection():
             self.itemlist.delete(item)
-
-    def generate_sb(self):
-        frame_canvas = tk.Frame(self)
-        frame_canvas.grid(row=0, column=0, padx=(10,0), pady=10)
-
-        self.canvas = tk.Canvas(frame_canvas)
-        self.canvas.grid(row=0, column=0, sticky="news")
-
-        vertical_sb = tk.Scrollbar(frame_canvas, orient="vertical", command=self.canvas.yview)
-        vertical_sb.grid(row=0, column=1, sticky="ns")
-        self.canvas.configure(yscrollcommand=vertical_sb.set)
-
-        self.frame_listbox = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
-        
-        self.itemlist = tk.Listbox(self.frame_listbox, width=63)
-        self.itemlist.grid(row=0, column=0)
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

@@ -427,7 +427,7 @@ class ReadPage(tk.Frame, Pages):
         searchbutton = tk.Button(self, text="SEARCH", command=self.query)
         searchbutton.grid(row=0, column=1, padx=25, pady=(0, 205))
 
-        advsearchbutton = tk.Button(self, text="ADVANCED\nSEARCH", command=self.advanced_search)
+        advsearchbutton = tk.Button(self, text="ADVANCED\nSEARCH", command=self.advanced_search_window)
         advsearchbutton.grid(row=0, column=1, padx=25, pady=(0, 105))
 
         back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage))
@@ -447,16 +447,18 @@ class ReadPage(tk.Frame, Pages):
         self.canvas.configure(yscrollcommand=vertical_sb.set)
 
         horizontal_sb = tk.Scrollbar(frame_canvas, orient="horizontal", command=self.canvas.xview)
-        horizontal_sb.grid(row=1, column=0, sticky="we")
+        horizontal_sb.grid(row=1, column=0, sticky="ew")
         self.canvas.configure(xscrollcommand=horizontal_sb.set)
 
         self.frame_listbox = tk.Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
-        
+
         self.itemlist = tk.Listbox(self.frame_listbox, width=63)
         self.itemlist.grid(row=0, column=0)
 
     def query(self):
+        self.resetlistbox()
+
         field_input = self.searchbox_field.get()
         query_input = self.searchbox_query.get()
 
@@ -478,8 +480,33 @@ class ReadPage(tk.Frame, Pages):
         except:
             messagebox.showerror("Error", "An error has occurred with the query. Review your input.")
 
+    def advanced_search_window(self):
+        self.queryWindow = Toplevel(self)
+        self.queryWindow.title("Write Custom Query")
+
+        self.queryWindow.wait_visibility()
+        self.queryWindow.grab_set()
+
+        self.custom_query = tk.Text(self.queryWindow, borderwidth=5, height= 10, width=30)
+        self.custom_query.grid(row=0, column=0, padx=50, pady=(20, 0))
+
+        submit_query = tk.Button(self.queryWindow, text="SUBMIT", command=self.advanced_search)
+        submit_query.grid(row=1, column=0, pady=20)
+
     def advanced_search(self):
-        pass
+        try:
+            find_product = Pages.coldatabase.find( json.loads(str(self.custom_query.get("1.0", END) ) ) )
+            for document in find_product:
+                self.itemlist.insert(END, document)
+
+            self.queryWindow.grab_release()
+            self.queryWindow.destroy()
+
+            self.frame_listbox.update_idletasks()
+            self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
     def resetlistbox(self):
         for item in self.itemlist.curselection():

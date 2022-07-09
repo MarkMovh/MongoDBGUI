@@ -446,19 +446,17 @@ class ReadPage(tk.Frame, Pages):
         vertical_sb.grid(row=0, column=1, sticky="ns")
         self.canvas.configure(yscrollcommand=vertical_sb.set)
 
-        horizontal_sb = tk.Scrollbar(frame_canvas, orient="horizontal", command=self.canvas.xview)
-        horizontal_sb.grid(row=1, column=0, sticky="ew")
-        self.canvas.configure(xscrollcommand=horizontal_sb.set)
-
         self.frame_listbox = tk.Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
 
         self.itemlist = tk.Listbox(self.frame_listbox, width=63)
         self.itemlist.grid(row=0, column=0)
 
-    def query(self):
-        self.resetlistbox()
+        horizontal_sb = tk.Scrollbar(frame_canvas, orient="horizontal", command=self.canvas.xview)
+        horizontal_sb.grid(row=1, column=0, sticky="ew")
+        self.canvas.configure(xscrollcommand=horizontal_sb.set)
 
+    def query(self):
         field_input = self.searchbox_field.get()
         query_input = self.searchbox_query.get()
 
@@ -469,6 +467,8 @@ class ReadPage(tk.Frame, Pages):
             messagebox.showerror("Error", "Select a valid field")
 
         try:
+            self.resetlistbox()
+
             query_return = Pages.coldatabase.find( { field_input: { "$regex": '.*' + query_input + '.*'} } )
 
             for document in query_return:
@@ -495,6 +495,8 @@ class ReadPage(tk.Frame, Pages):
 
     def advanced_search(self):
         try:
+            self.resetlistbox()
+
             find_product = Pages.coldatabase.find( json.loads(str(self.custom_query.get("1.0", END) ) ) )
             for document in find_product:
                 self.itemlist.insert(END, document)
@@ -509,8 +511,9 @@ class ReadPage(tk.Frame, Pages):
             messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
     def resetlistbox(self):
-        for item in self.itemlist.curselection():
-            self.itemlist.delete(item)
+        if self.itemlist.size() != 0:
+            for i in range(self.itemlist.size()):
+                self.itemlist.delete(0, END)
 
 class DeletePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

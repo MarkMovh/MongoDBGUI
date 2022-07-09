@@ -418,20 +418,20 @@ class ReadPage(tk.Frame, Pages):
 
         self.searchbox_field = tk.Entry(self, borderwidth=5, width=25)
         self.searchbox_field.insert(0, "<Enter a field>")
-        self.searchbox_field.grid(row=0, column=1, padx=(25), pady=(0, 325))
+        self.searchbox_field.grid(row=0, column=1, padx=(25), pady=(0, 225))
 
         self.searchbox_query = tk.Entry(self, borderwidth=5, width=25)
         self.searchbox_query.insert(0, "<Enter a query>")
-        self.searchbox_query.grid(row=0, column=1, padx=(25), pady=(0, 265))
+        self.searchbox_query.grid(row=0, column=1, padx=(25), pady=(0, 165))
 
         searchbutton = tk.Button(self, text="SEARCH", command=self.query)
-        searchbutton.grid(row=0, column=1, padx=25, pady=(0, 205))
+        searchbutton.grid(row=0, column=1, padx=25, pady=(0, 105))
 
         advsearchbutton = tk.Button(self, text="ADVANCED\nSEARCH", command=self.advanced_search_window)
-        advsearchbutton.grid(row=0, column=1, padx=25, pady=(0, 105))
+        advsearchbutton.grid(row=0, column=1, padx=25, pady=(0, 25))
 
         back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage))
-        back_button.grid(row=0, column=1, padx=25, pady=(0, 25))
+        back_button.grid(row=0, column=1, padx=25, pady=(65, 0))
 
         self.generate_sb()
 
@@ -442,19 +442,20 @@ class ReadPage(tk.Frame, Pages):
         self.canvas = tk.Canvas(frame_canvas)
         self.canvas.grid(row=0, column=0, sticky="news")
 
-        vertical_sb = tk.Scrollbar(frame_canvas, orient="vertical", command=self.canvas.yview)
+        vertical_sb = tk.Scrollbar(frame_canvas, orient="vertical")
         vertical_sb.grid(row=0, column=1, sticky="ns")
-        self.canvas.configure(yscrollcommand=vertical_sb.set)
+
+        horizontal_sb = tk.Scrollbar(frame_canvas, orient="horizontal")
+        horizontal_sb.grid(row=1, column=0, sticky="ew")
 
         self.frame_listbox = tk.Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
 
-        self.itemlist = tk.Listbox(self.frame_listbox, width=63)
-        self.itemlist.grid(row=0, column=0)
+        self.itemlist = tk.Listbox(self.frame_listbox, width=63, xscrollcommand=horizontal_sb.set, yscrollcommand=vertical_sb.set)
+        self.itemlist.grid(row=0, column=0, sticky="nsew")
 
-        horizontal_sb = tk.Scrollbar(frame_canvas, orient="horizontal", command=self.canvas.xview)
-        horizontal_sb.grid(row=1, column=0, sticky="ew")
-        self.canvas.configure(xscrollcommand=horizontal_sb.set)
+        horizontal_sb["command"] = self.itemlist.xview
+        vertical_sb["command"] = self.itemlist.yview
 
     def query(self):
         field_input = self.searchbox_field.get()
@@ -474,8 +475,8 @@ class ReadPage(tk.Frame, Pages):
             for document in query_return:
                 self.itemlist.insert(END, document)
 
-            self.frame_listbox.update_idletasks()
-            self.canvas.config(scrollregion=self.canvas.bbox("all"))
+            #self.frame_listbox.update_idletasks()
+            #self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
         except:
             messagebox.showerror("Error", "An error has occurred with the query. Review your input.")

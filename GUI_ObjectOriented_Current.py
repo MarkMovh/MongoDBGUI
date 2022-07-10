@@ -524,8 +524,11 @@ class DeletePage(tk.Frame, Pages):
         label_entry1 = tk.Label(self, text="Select Field").grid(row=0, column=0, padx=25, pady=(25,0))
         label_entry2 = tk.Label(self, text="Select Value").grid(row=0, column=1, padx=25, pady=(25,0))
 
-        entry1 = tk.Entry(self, borderwidth=5).grid(row=1, column=0, padx=25, pady=5)
-        entry2 = tk.Entry(self, borderwidth=5).grid(row=1, column=1, padx=25, pady=5)
+        self.delete_field= tk.Entry(self, borderwidth=5)
+        self.delete_field.grid(row=1, column=0, padx=25, pady=5)
+
+        self.delete_value = tk.Entry(self, borderwidth=5)
+        self.delete_value.grid(row=1, column=1, padx=25, pady=5)
 
         label_button_one = tk.Label(self, text="Delete first matching document").grid(row=2, column=0, padx=25, pady=5)
         label_button_two = tk.Label(self, text="Delete all matching documents").grid(row=2, column=1, padx=25, pady=5)
@@ -538,16 +541,39 @@ class DeletePage(tk.Frame, Pages):
         label_delete_collection = tk.Label(self, text="Note! Pressing this button \n will delete current collection").grid(row=5, column=0, padx=25, pady=(0,25))
 
     def delete_one(self):
-        mycol = Pages.coldatabase
-        print(mycol)
+        try:
+            field = self.delete_field.get()
+            value = self.delete_value.get()
+
+            if len(field) == 0 or len(value) == 0:
+                messagebox.showerror("Error", "Empty inputs. Try again.")
+
+            else:
+                Pages.coldatabase.delete_one( { field: value} )
+                messagebox.showinfo("MongoDB Single-Document Deletion", "Following document has been removed")
+
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
     def delete_many(self):
-        mycol = Pages.coldatabase
-        print(mycol)
+        try:
+            field = self.delete_field.get()
+            value = self.delete_value.get()
+
+            if len(field) == 0 or len(value) == 0:
+                messagebox.showerror("Error", "Empty inputs. Try again.")
+
+            else:
+                document = Pages.coldatabase.delete_many( { field: value} )
+                print(document)
+                messagebox.showinfo("MongoDB All-Document Deletion", "Number of documents deleted:" + str(document.deleted_count))
+                
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
     def delete_collection(self):
-        mycol = Pages.coldatabase
-        print(mycol)
+        Pages.coldatabase.drop()
+        messagebox.showinfo("MongoDB Collection Deletion", "The collection has now been deleted. Rerouting to selection of database menu.")
         self.controller.reload_frame(SelectDatabase)
 
 

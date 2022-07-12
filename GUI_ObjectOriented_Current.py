@@ -244,7 +244,7 @@ class MainPage(tk.Frame, Pages):
         read_button = tk.Button(self, text="READ", command=lambda: controller.reload_frame(ReadPage)).grid(row=2, column=1)
 
         label_update = tk.Label(self, text="Modify existing data").grid(row=3, column=0, padx=25, pady=(50,0))
-        update_button = tk.Button(self, text="UPDATE").grid(row=4, column=0, pady=(0,50))
+        update_button = tk.Button(self, text="UPDATE", command=lambda: controller.reload_frame(UpdatePage)).grid(row=4, column=0, pady=(0,50))
 
         label_delete = tk.Label(self, text="Remove data").grid(row=3, column=1, padx=25, pady=(50,0))
         delete_button = tk.Button(self, text="DELETE", command=lambda: controller.current_frame("DeletePage")).grid(row=4, column=1, pady=(0,50))   
@@ -565,18 +565,87 @@ class DeletePage(tk.Frame, Pages):
 
             else:
                 document = Pages.coldatabase.delete_many( { field: value} )
-                print(document)
                 messagebox.showinfo("MongoDB All-Document Deletion", "Number of documents deleted:" + str(document.deleted_count))
                 
         except:
             messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
     def delete_collection(self):
-        Pages.coldatabase.drop()
-        messagebox.showinfo("MongoDB Collection Deletion", "The collection has now been deleted. Rerouting to selection of database menu.")
-        self.controller.reload_frame(SelectDatabase)
+        warning = messagebox.askyesnocancel("MongoDB Collection Deletion", "Are you sure you want to delete this collection? All the content will be deleted, and cannot be restored.")
 
+        if warning:
+            Pages.coldatabase.drop()
+            messagebox.showinfo("MongoDB Collection Deletion", "The collection has now been deleted. Rerouting to selection of database menu.")
+            self.controller.reload_frame(SelectDatabase)
+        else:
+            pass
 
+class UpdatePage(tk.Frame, Pages):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        field_entry_label = tk.Label(self, text="Select Field\n to find")
+        field_entry_label.grid(row=0, column=0, padx=(100, 15), pady=(35, 0))
+
+        self.field_entry = tk.Entry(self, borderwidth=5)
+        self.field_entry.grid(row=0, column=1, pady=(35, 0))
+
+        oldval_entry_label = tk.Label(self, text="Select Value")
+        oldval_entry_label.grid(row=1, column=0, padx=(100, 15), pady=(15, 0))
+
+        self.oldval_entry = tk.Entry(self, borderwidth=5)
+        self.oldval_entry.grid(row=1, column=1, pady=(15, 0))
+
+        otherfield_label = tk.Label(self, text="Select Field\n to modify")
+        otherfield_label.grid(row=2, column=0, padx=(100, 15), pady=(15, 0))
+
+        self.otherfield_entry = tk.Entry(self, borderwidth=5)
+        self.otherfield_entry.grid(row=2, column=1, pady=(15, 0))
+
+        newval_entry_label = tk.Label(self, text="Choose new value\nto update to")
+        newval_entry_label.grid(row=3, column=0, padx=(100, 15), pady=(15, 0))
+
+        self.newval_entry = tk.Entry(self, borderwidth=5)
+        self.newval_entry.grid(row=3, column=1, pady=(15, 0))
+
+        update_button = tk.Button(self, text="UPDATE", command=self.updateone)
+        update_button.grid(row=0, column=2, padx=15, pady=(35, 0))
+
+        custom_button = tk.Button(self, text="CUSTOM\nUPDATE", command=self.updatewindow)
+        custom_button.grid(row=1, column=2, padx=15, pady=(15, 0))
+
+        back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage))
+        back_button.grid(row=2, column=2, padx=15, pady=(15, 0))
+
+    def updateone(self):
+        field = self.field_entry.get()
+        oldval = self.oldval_entry.get()
+        otherfield = self.otherfield_entry.get()
+        newval = self.newval_entry.get()
+
+        if len(field) == 0 or len(oldval) == 0 or len(newval) == 0:
+                messagebox.showerror("Error", "Empty inputs. Try again.")
+
+        else:
+            try:
+                if len(otherfield) == 0:
+                    otherfield = field
+
+                document = Pages.coldatabase.update_one( { field: oldval}, { "$set": {otherfield: newval}} )
+                reroute = messagebox.askyesno("MongoDB Rerouting Service", "Would you like to be rerouted to the READ section?")
+
+                if reroute:
+                    self.controller.reload_frame(ReadPage)
+                else:
+                    self.controller.reload_frame(UpdatePage)
+
+            except:
+                messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
+        
+
+    def updatewindow(self):
+        pass
 
 if __name__ == "__main__":
     NoSQL_Project = Database_Project()

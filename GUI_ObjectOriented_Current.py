@@ -643,9 +643,56 @@ class UpdatePage(tk.Frame, Pages):
             except:
                 messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
         
-
     def updatewindow(self):
-        pass
+        self.updateWindow = Toplevel(self)
+        self.updateWindow.title("Write Custom Query")
+
+        self.updateWindow.wait_visibility()
+        self.updateWindow.grab_set()
+
+        find_label = tk.Label(self.updateWindow, text="Find query")
+        find_label.grid(row=0, column=0, padx=50, pady=(20, 0))
+
+        self.custom_update_find = tk.Text(self.updateWindow, borderwidth=5, height= 5, width=30)
+        self.custom_update_find.grid(row=1, column=0, padx=50, pady=(5, 0))
+
+        update_label = tk.Label(self.updateWindow, text="Update query")
+        update_label.grid(row=2, column=0, padx=50, pady=(10, 0))
+
+        self.custom_update_change = tk.Text(self.updateWindow, borderwidth=5, height= 5, width=30)
+        self.custom_update_change.grid(row=3, column=0, padx=50, pady=(5, 0))
+
+        update_one = tk.Button(self.updateWindow, text="UPDATE ONE", command=lambda: self.customupdate("One"))
+        update_one.grid(row=4, column=0, padx=(0, 150), pady=20)
+
+        update_many = tk.Button(self.updateWindow, text="UPDATE MANY", command=lambda: self.customupdate("Many"))
+        update_many.grid(row=4, column=0, padx=(150, 0), pady=20)
+
+    def customupdate(self, option):
+        try:
+            if option == "One":
+                update_product = Pages.coldatabase.update_one( json.loads(str(self.custom_update_find.get("1.0", END) ) ), json.loads(str(self.custom_update_change.get("1.0", END) ) ) )
+                reroute = messagebox.askyesno("MongoDB Rerouting Service", "Would you like to be rerouted to the READ section?")
+
+                if reroute:
+                    self.controller.reload_frame(ReadPage)
+                else:
+                    self.controller.reload_frame(UpdatePage)
+
+            if option == "Many":
+                update_product = Pages.coldatabase.update_many( json.loads(str(self.custom_update_find.get("1.0", END) ) ), json.loads(str(self.custom_update_change.get("1.0", END) ) ) )
+                reroute = messagebox.askyesno("MongoDB Rerouting Service", "Would you like to be rerouted to the READ section?")
+
+                if reroute:
+                    self.controller.reload_frame(ReadPage)
+                else:
+                    self.controller.reload_frame(UpdatePage)
+
+            self.updateWindow.grab_release()
+            self.updateWindow.destroy()
+
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
 if __name__ == "__main__":
     NoSQL_Project = Database_Project()

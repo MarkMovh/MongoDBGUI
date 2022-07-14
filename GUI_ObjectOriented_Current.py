@@ -271,20 +271,7 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         self.inputlist = []
         self.newinputlist = []
 
-        frame_self = Frame(self)
-        frame_self .pack(fill=BOTH, expand=1)
-
-        self.canvas_insertone = Canvas(frame_self)
-        self.canvas_insertone.pack(side=LEFT, fill=BOTH, expand=1)
-
-        scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertone.yview)
-        scrollbar.pack(side=RIGHT, fill=Y)
-
-        self.canvas_insertone.configure(yscrollcommand=scrollbar.set)
-        self.canvas_insertone.bind('<Configure>', lambda e: self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox("all")))
-
-        self.frame_two = Frame(self.canvas_insertone)
-        self.canvas_insertone.create_window((0,0), window=self.frame_two , anchor="nw")
+        self.generate_sb()
 
         labels = [tk.Label(self.frame_two , text="Enter unique field"), tk.Label(self.frame_two , text="Enter corresponding the value/s")]
         self.inputlist.append(labels[:])
@@ -345,6 +332,22 @@ class CreatePage_InsertOne(tk.Frame, Pages):
         except:
             messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
+    def generate_sb(self):
+        frame_self = Frame(self)
+        frame_self .pack(fill=BOTH, expand=1)
+
+        self.canvas_insertone = Canvas(frame_self)
+        self.canvas_insertone.pack(side=LEFT, fill=BOTH, expand=1)
+
+        scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertone.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.canvas_insertone.configure(yscrollcommand=scrollbar.set)
+        self.canvas_insertone.bind('<Configure>', lambda e: self.canvas_insertone.configure(scrollregion = self.canvas_insertone.bbox("all")))
+
+        self.frame_two = Frame(self.canvas_insertone)
+        self.canvas_insertone.create_window((0,0), window=self.frame_two , anchor="nw")
+
 class CreatePage_InsertMany(tk.Frame, Pages):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -353,20 +356,7 @@ class CreatePage_InsertMany(tk.Frame, Pages):
         self.inputlist = []
         self.newinputlist = []
 
-        frame_self = Frame(self)
-        frame_self.pack(fill=BOTH, expand=1)
-
-        self.canvas_insertmany = Canvas(frame_self)
-        self.canvas_insertmany.pack(side=LEFT, fill=BOTH, expand=1)
-
-        scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertmany.yview)
-        scrollbar.pack(side=RIGHT, fill=Y)
-
-        self.canvas_insertmany.configure(yscrollcommand=scrollbar.set)
-        self.canvas_insertmany.bind('<Configure>', lambda e: self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox("all")))
-
-        self.frame_two = Frame(self.canvas_insertmany)
-        self.canvas_insertmany.create_window((0,0), window=self.frame_two , anchor="nw")
+        self.generate_sb()
 
         label = tk.Label(self.frame_two, text="Insert valid JSON document")
         first_entry = tk.Text(self.frame_two, borderwidth=5, height= 10, width=20)
@@ -409,6 +399,22 @@ class CreatePage_InsertMany(tk.Frame, Pages):
 
         except:
             messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
+
+    def generate_sb(self):
+        frame_self = Frame(self)
+        frame_self.pack(fill=BOTH, expand=1)
+
+        self.canvas_insertmany = Canvas(frame_self)
+        self.canvas_insertmany.pack(side=LEFT, fill=BOTH, expand=1)
+
+        scrollbar= tk.Scrollbar(frame_self, orient=VERTICAL, command=self.canvas_insertmany.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.canvas_insertmany.configure(yscrollcommand=scrollbar.set)
+        self.canvas_insertmany.bind('<Configure>', lambda e: self.canvas_insertmany.configure(scrollregion = self.canvas_insertmany.bbox("all")))
+
+        self.frame_two = Frame(self.canvas_insertmany)
+        self.canvas_insertmany.create_window((0,0), window=self.frame_two , anchor="nw")
 
 
 class ReadPage(tk.Frame, Pages):

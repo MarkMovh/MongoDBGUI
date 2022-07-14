@@ -451,7 +451,7 @@ class ReadPage(tk.Frame, Pages):
         self.frame_listbox = tk.Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame_listbox, anchor="nw")
 
-        self.itemlist = tk.Listbox(self.frame_listbox, width=63, xscrollcommand=horizontal_sb.set, yscrollcommand=vertical_sb.set)
+        self.itemlist = tk.Listbox(self.frame_listbox, width=63, height=17, xscrollcommand=horizontal_sb.set, yscrollcommand=vertical_sb.set)
         self.itemlist.grid(row=0, column=0, sticky="nsew")
 
         horizontal_sb["command"] = self.itemlist.xview

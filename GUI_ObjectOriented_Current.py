@@ -475,9 +475,6 @@ class ReadPage(tk.Frame, Pages):
             for document in query_return:
                 self.itemlist.insert(END, document)
 
-            #self.frame_listbox.update_idletasks()
-            #self.canvas.config(scrollregion=self.canvas.bbox("all"))
-
         except:
             messagebox.showerror("Error", "An error has occurred with the query. Review your input.")
 
@@ -536,9 +533,11 @@ class DeletePage(tk.Frame, Pages):
         button_delete_one = tk.Button(self, text="DELETE ONE", command=self.delete_one).grid(row=3, column=0, padx=25, pady=5)
         button_delete_two = tk.Button(self, text="DELETE MANY", command=self.delete_many).grid(row=3, column=1, padx=25, pady=5)
         button_delete_collection = tk.Button(self, text="DELETE COLLECTION", command=self.delete_collection).grid(row=4, column=0, padx=25, pady=5)
-        back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage)).grid(row=4, column=1, padx=25, pady=5)
+        button_delete_query = tk.Button(self, text="CUSTOM DELETE", command=self.delete_window).grid(row=4, column=1, padx=25, pady=5)
 
-        label_delete_collection = tk.Label(self, text="Note! Pressing this button \n will delete current collection").grid(row=5, column=0, padx=25, pady=(0,25))
+        back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage)).grid(row=5, column=1, padx=25)
+
+        label_delete_collection = tk.Label(self, text="Note! Pressing this button \n will delete current collection").grid(row=5, column=0, padx=25)
 
     def delete_one(self):
         try:
@@ -579,6 +578,39 @@ class DeletePage(tk.Frame, Pages):
             self.controller.reload_frame(SelectDatabase)
         else:
             pass
+
+    def delete_window(self):
+        self.queryWindow = Toplevel(self)
+        self.queryWindow.title("Write Custom Query")
+
+        self.queryWindow.wait_visibility()
+        self.queryWindow.grab_set()
+
+        self.custom_query = tk.Text(self.queryWindow, borderwidth=5, height= 10, width=30)
+        self.custom_query.grid(row=0, column=0, padx=50, pady=(20, 0))
+
+        submit_query = tk.Button(self.queryWindow, text="DELETE ONE", command=lambda: self.advanced_delete(0))
+        submit_query.grid(row=1, column=0, padx=(0,100), pady=20)
+
+        submit_query = tk.Button(self.queryWindow, text="DELETE MANY", command=lambda: self.advanced_delete(1))
+        submit_query.grid(row=1, column=0, padx=(100,0), pady=20)
+
+
+    def advanced_delete(self, choice):
+        try:
+            if choice == 0:
+                one_del = Pages.coldatabase.delete_one( json.loads(str(self.custom_query.get("1.0", END) ) ) )
+                messagebox.showinfo("MongoDB Single-Document Deletion", "Following document has been removed")
+
+            elif choice == 1:
+                many_del = Pages.coldatabase.delete_many( json.loads(str(self.custom_query.get("1.0", END) ) ) ) 
+                messagebox.showinfo("MongoDB All-Document Deletion", "Number of documents deleted:" + str(many_del.deleted_count))
+
+            self.queryWindow.grab_release()
+            self.queryWindow.destroy()
+                
+        except:
+            messagebox.showerror("Error", "An Error has occured. Please make sure your inputs are valid.")
 
 class UpdatePage(tk.Frame, Pages):
     def __init__(self, parent, controller):

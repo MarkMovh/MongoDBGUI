@@ -1,8 +1,11 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import filedialog
 from pymongo import MongoClient
 import json
+from pathlib import Path
+import shutil, os
 
 class Connect_MongoDB:
     def __init__(self):
@@ -260,7 +263,24 @@ class CreatePage_Main(tk.Frame, Pages):
         back_button = tk.Button(self, text="BACK", command=lambda: controller.reload_frame(MainPage)).grid(row=1, column=1, pady=25)
 
     def import_file(self):
-        pass
+        file_path = filedialog.askopenfilename(initialdir= "/", title="Choose JSON File", filetype=[("Json", '*.json')])
+        json_file = Path(file_path)   
+
+        try:
+            shutil.copy(file_path, os.getcwd())
+
+            with open(json_file.name) as f:
+                document = json.load(f)
+
+            if isinstance(document, list):
+                Pages.coldatabase.insert_many(document)
+                messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")    
+            else:
+                Pages.coldatabase.insert_one(document)
+                messagebox.showinfo("MongoDB Document Submission", "Your document has been added to the database.")       
+
+        except:
+            messagebox.showerror("Error", "The file selected was invalid. Only JSON files are allowed. Make sure the format and syntax are correct.")
 
 
 class CreatePage_InsertOne(tk.Frame, Pages):

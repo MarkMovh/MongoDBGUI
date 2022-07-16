@@ -34,7 +34,7 @@ class Database_Project(tk.Tk):
 
         self.frameslist = {}
 
-        for frame in (SelectDatabase, MainPage, CreatePage_Main, CreatePage_InsertOne, CreatePage_InsertMany, DeletePage):
+        for frame in (CreatePage_Main, CreatePage_InsertOne, CreatePage_InsertMany, DeletePage):
             frame_occurrence = frame.__name__
             active_frame = frame(parent=self.stack_frame_container, controller=self)
             self.frameslist[frame_occurrence] = active_frame
@@ -63,6 +63,8 @@ class Database_Project(tk.Tk):
 class Pages:
     coldatabase = ""
     collection = ""
+
+    general_font = ("Calibri", 15, "bold")
     
 
 class SelectDatabase(tk.Frame, Pages):
@@ -83,8 +85,8 @@ class SelectDatabase(tk.Frame, Pages):
         self.collection_list_frame = tk.Frame(self)
         self.collection_list_frame.grid(row=1)
 
-        label_top = tk.Label(database_list_frame, text="Choose existing database").grid(row=0, column=1, pady=25)
-        self.runningdb_label = tk.Label(database_list_frame, text="No active database") 
+        label_top = tk.Label(database_list_frame, text="Choose existing database", font=Pages.general_font).grid(row=0, column=1, pady=25)
+        self.runningdb_label = tk.Label(database_list_frame, text="No active database", font=Pages.general_font) 
 
         for index, db in enumerate(databases):
             database_dict[index] = db
@@ -93,7 +95,10 @@ class SelectDatabase(tk.Frame, Pages):
         count= 0
         for key, value in database_dict.items():   
             namedb = value['name']
-            tk.Button(database_list_frame, text=str(value['name']), command=lambda namedb=namedb: self.set_activedb(namedb)).grid(row=rowcount, column=(count), padx=50, pady=15)
+
+            tk.Button(database_list_frame, text=str(value['name']), background="#41B834", foreground="#fff", 
+                                                    font=Pages.general_font, height=3, width=20, cursor="hand2", 
+                                                    command=lambda namedb=namedb: self.set_activedb(namedb)).grid(row=rowcount, column=(count), padx=25, pady=15)
             count += 1
 
             if count % 3 == 0:
@@ -101,7 +106,7 @@ class SelectDatabase(tk.Frame, Pages):
                 count = 0
 
         self.runningdb_label.grid(row=rowcount + 1, column=0, pady=25)
-        create_db_button=tk.Button(database_list_frame, text="+")
+        create_db_button=tk.Button(database_list_frame, text="+", font=Pages.general_font, height=2, width=6, cursor="hand2")
         create_db_button.grid(row=rowcount + 1, column=2, pady=25)
         create_db_button.bind("<Button>", lambda e: self.create_database_window())
 
@@ -127,19 +132,19 @@ class SelectDatabase(tk.Frame, Pages):
 
         for collect in collection:
             col = collect
-            self.buttons_list.append(tk.Button(self.collection_list_frame, text=str(col), command=lambda col=col: self.set_collection(col, chosendb)))
+            self.buttons_list.append(tk.Button(self.collection_list_frame, text=str(col), background="#303030", foreground="#BABABA", font=Pages.general_font, height=2, width=25, command=lambda col=col: self.set_collection(col, chosendb)))
 
         rowcount = 0
         count = 0
         for collect in range(len(self.buttons_list)):
-            self.buttons_list[collect].grid(row=rowcount, column=count, padx=50, pady=15)
+            self.buttons_list[collect].grid(row=rowcount, column=count, padx=25, pady=15)
             count += 1
 
             if count % 3 == 0:
                rowcount += 1
                count = 0
 
-        self.create_col_button=tk.Button(self.collection_list_frame, text="+")
+        self.create_col_button=tk.Button(self.collection_list_frame, text="+",  font=Pages.general_font, height=2, width=6, cursor="hand2")
         self.create_col_button.grid(row=rowcount , column=count, pady=25)
         self.create_col_button.bind("<Button>", lambda e: self.create_collection_window())
 
@@ -755,5 +760,6 @@ class UpdatePage(tk.Frame, Pages):
 if __name__ == "__main__":
     NoSQL_Project = Database_Project()
     NoSQL_Project.title("NoSQL Database Project")
-    NoSQL_Project.maxsize(0, 500)
+    NoSQL_Project.configure(bg='black') 
+    #NoSQL_Project.minsize(930, 680)
     NoSQL_Project.mainloop()

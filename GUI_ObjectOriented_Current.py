@@ -241,21 +241,21 @@ class MainPage(tk.Frame, Pages):
         
         self.controller = controller
 
-        label_collection = tk.Label(self, text="Selected Collection: " + Pages.collection).grid(row=1, column=0, padx=(25,0))
+        label_collection = tk.Label(self, text="Selected Collection: " + Pages.collection, font=Pages.general_font,).grid(row=1, column=0, padx=(25,0))
 
-        button3 = tk.Button(self, text="CHANGE DATABASE", command=lambda: controller.reload_frame(SelectDatabase)).grid(row=1, column=2, padx=25, pady=(0,0))
+        button3 = tk.Button(self, text="CHANGE\nDATABASE", background="#41B834", foreground="#fff", font=("Calibri", 12, "bold"), width=10, height=2, command=lambda: controller.reload_frame(SelectDatabase)).grid(row=1, column=2, padx=(0,15), pady=(25,0))
 
-        label_create = tk.Label(self, text="Create and insert data").grid(row=1, column=0, padx=25, pady=(50,0))
-        create_button = tk.Button(self, text="CREATE", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=2, column=0)
+        label_create = tk.Label(self, text="Create and insert data", foreground="#3D3D3D", font=Pages.general_font).grid(row=1, column=0, padx=25, pady=(50,0))
+        create_button = tk.Button(self, text="CREATE", background="#000000", foreground="#fff", font=Pages.general_font, height=6, width=30, cursor="hand2", command=lambda: controller.current_frame("CreatePage_Main")).grid(row=2, column=0, padx=25)
 
-        label_read = tk.Label(self, text="Query over data").grid(row=1, column=1, padx=25, pady=(50,0))
-        read_button = tk.Button(self, text="READ", command=lambda: controller.reload_frame(ReadPage)).grid(row=2, column=1)
+        label_read = tk.Label(self, text="Query over data", font=Pages.general_font, foreground="#3D3D3D").grid(row=1, column=1, padx=25, pady=(50,0))
+        read_button = tk.Button(self, text="READ", background="#000000", foreground="#fff", font=Pages.general_font, height=6, width=30, cursor="hand2", command=lambda: controller.reload_frame(ReadPage)).grid(row=2, column=1, padx=25)
 
-        label_update = tk.Label(self, text="Modify existing data").grid(row=3, column=0, padx=25, pady=(50,0))
-        update_button = tk.Button(self, text="UPDATE", command=lambda: controller.reload_frame(UpdatePage)).grid(row=4, column=0, pady=(0,50))
+        label_update = tk.Label(self, text="Modify existing data", font=Pages.general_font, foreground="#3D3D3D").grid(row=3, column=0, padx=25, pady=(50,0))
+        update_button = tk.Button(self, text="UPDATE", background="#000000", foreground="#fff", font=Pages.general_font, height=6, width=30, cursor="hand2", command=lambda: controller.reload_frame(UpdatePage)).grid(row=4, column=0, pady=(0,50), padx=25)
 
-        label_delete = tk.Label(self, text="Remove data").grid(row=3, column=1, padx=25, pady=(50,0))
-        delete_button = tk.Button(self, text="DELETE", command=lambda: controller.current_frame("DeletePage")).grid(row=4, column=1, pady=(0,50))   
+        label_delete = tk.Label(self, text="Remove data", font=Pages.general_font, foreground="#3D3D3D").grid(row=3, column=1, padx=25, pady=(50,0))
+        delete_button = tk.Button(self, text="DELETE", background="#000000", foreground="#fff", font=Pages.general_font, height=6, width=30, cursor="hand2", command=lambda: controller.current_frame("DeletePage")).grid(row=4, column=1, pady=(0,50), padx=25)   
 
 class CreatePage_Main(tk.Frame, Pages):
     def __init__(self, parent, controller):
